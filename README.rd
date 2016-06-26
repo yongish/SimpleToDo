@@ -31,7 +31,7 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-![Video Walkthrough](SimpleToDo.gif)
+![Video Walkthrough](SimpleToDo.gif?raw=true "SimpleToDo")
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
