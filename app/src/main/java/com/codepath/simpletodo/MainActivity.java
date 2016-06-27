@@ -23,24 +23,29 @@ public class MainActivity extends AppCompatActivity {
     static SQLiteDatabase db;
     ArrayList<String> itemNameArray;
     ArrayList<Item> itemArray;
+    //CustomItemsAdapter itemAdapter;
     ArrayAdapter<String> itemAdapter;
-    ListView lvItems;
+    ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        lvItems = (ListView)findViewById(R.id.lvItems);
+
+        listView = (ListView)findViewById(R.id.lvItems);
         readItems();
         itemAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, itemNameArray);
-        lvItems.setAdapter(itemAdapter);
+        listView.setAdapter(itemAdapter);
+
+        //populateUsersList();
+
         setupListViewListener();
     }
 
     private final int REQUEST_CODE = 20;
     private void setupListViewListener() {
-        lvItems.setOnItemLongClickListener(
+        listView.setOnItemLongClickListener(
                 new AdapterView.OnItemLongClickListener() {
                     @Override
                     public boolean onItemLongClick(AdapterView<?> adapter,
@@ -55,11 +60,11 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
 
-        lvItems.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapter, View item, int pos, long id) {
                 Intent editItem = new Intent(MainActivity.this, EditItemActivity.class);
-                String itemText = (String) lvItems.getItemAtPosition(pos);
+                String itemText = (String) listView.getItemAtPosition(pos);
                 editItem.putExtra("text", itemText);
                 editItem.putExtra("pos", pos);
                 startActivityForResult(editItem, REQUEST_CODE);
@@ -112,6 +117,12 @@ public class MainActivity extends AppCompatActivity {
             itemNameArray.add(i.getName());
         }
         itemAdapter.notifyDataSetChanged();
+/*
+        // Create the adapter to convert the array to views
+        itemAdapter = new CustomItemsAdapter(this, itemArray);
+        // Attach the adapter to a ListView
+        listView = (ListView) findViewById(R.id.lvItems);
+        listView.setAdapter(itemAdapter);*/
     }
 
     public void showSoftKeyboard(View view){
