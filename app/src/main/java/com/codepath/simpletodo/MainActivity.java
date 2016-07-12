@@ -2,6 +2,7 @@ package com.codepath.simpletodo;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -18,9 +19,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    ArrayList<String> items;
-    ArrayAdapter<String> itemsAdapter;
+
+    static SQLiteDatabase db;
+
     ListView lvItems;
+
+    ArrayAdapter<String> itemsAdapter;
+    ArrayList<Item> itemArray;
+    ArrayList<String> itemNameArray;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,8 +35,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         lvItems = (ListView)findViewById(R.id.lvItems);
         readItems();
+
+        PracticeDatabaseHelper dbHelper = new PracticeDatabaseHelper(this);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
         itemsAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, items);
+                android.R.layout.simple_list_item_1, itemNameArray);
         lvItems.setAdapter(itemsAdapter);
         setupListViewListener();
     }
@@ -41,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public boolean onItemLongClick(AdapterView<?> adapter,
                                                    View item, int pos, long id) {
-                        items.remove(pos);
+                        itemNameArray.remove(pos);
                         itemsAdapter.notifyDataSetChanged();
                         writeItems();
                         return true;
@@ -66,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
             String text = data.getExtras().getString("text");
             int pos = data.getExtras().getInt("pos");
 
-            items.set(pos, text);
+            itemNameArray.set(pos, text);
             itemsAdapter.notifyDataSetChanged();
             writeItems();
         }
@@ -84,17 +95,29 @@ public class MainActivity extends AppCompatActivity {
         File filesDir = getFilesDir();
         File todoFile = new File(filesDir, "todo.txt");
         try {
-            items = new ArrayList<String>(FileUtils.readLines(todoFile));
+            itemNameArray = new ArrayList<String>(FileUtils.readLines(todoFile));
         } catch (IOException e) {
-            items = new ArrayList<String>();
+            itemNameArray = new ArrayList<String>();
         }
+/*
+        Cursor bunnies = cupboard().withDatabase(db).query(Item.class).getCursor();
+        try {
+            // Iterate Bunnys
+            QueryResultIterable<Item> itr = cupboard().withCursor(bunnies).iterate(Item.class);
+            for (Item bunny : itr) {
+                // do something with bunny
+            }
+        } finally {
+            // close the cursor
+            bunnies.close();
+        }*/
     }
 
     private void writeItems() {
         File filesDir = getFilesDir();
         File todoFile = new File(filesDir, "todo.txt");
         try {
-            FileUtils.writeLines(todoFile, items);
+            FileUtils.writeLines(todoFile, itemNameArray);
         } catch (IOException e) {
             e.printStackTrace();
         }
