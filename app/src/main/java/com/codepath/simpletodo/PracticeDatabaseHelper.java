@@ -3,6 +3,7 @@ package com.codepath.simpletodo;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
 import static nl.qbusict.cupboard.CupboardFactory.cupboard;
 
 public class PracticeDatabaseHelper extends SQLiteOpenHelper {

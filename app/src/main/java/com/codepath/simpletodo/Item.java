@@ -16,4 +16,20 @@ public class Item {
         this.name = name;
         //this.cuteValue = cuteValue;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Long get_id() {
+        return _id;
+    }
+
+    public void set_id(Long _id) {
+        this._id = _id;
+    }
 }

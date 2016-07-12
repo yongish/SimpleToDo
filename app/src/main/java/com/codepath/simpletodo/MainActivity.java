@@ -12,11 +12,12 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import org.apache.commons.io.FileUtils;
-
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+
+import nl.qbusict.cupboard.QueryResultIterable;
+
+import static nl.qbusict.cupboard.CupboardFactory.cupboard;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,15 +35,38 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         lvItems = (ListView)findViewById(R.id.lvItems);
-        readItems();
 
         PracticeDatabaseHelper dbHelper = new PracticeDatabaseHelper(this);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db = dbHelper.getWritableDatabase();
+        itemNameArray = getAllItemsNames();
 
         itemsAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, itemNameArray);
         lvItems.setAdapter(itemsAdapter);
         setupListViewListener();
+    }
+
+    public ArrayList<String> getAllItemsNames() {
+        final QueryResultIterable<Item> iter = cupboard().withDatabase(db).query(Item.class).query();
+        itemArray = (ArrayList<Item>) getListFromQueryResultIterator(iter);
+
+        ArrayList<String> itemNameArray = new ArrayList<String>();
+        for (Item b : itemArray) {
+            itemNameArray.add(b.getName());
+        }
+
+        return itemNameArray;
+    }
+
+    private static List<Item> getListFromQueryResultIterator(QueryResultIterable<Item> iter) {
+
+        final List<Item> bunnies = new ArrayList<Item>();
+        for (Item bunny : iter) {
+            bunnies.add(bunny);
+        }
+        iter.close();
+
+        return bunnies;
     }
 
     private final int REQUEST_CODE = 20;
@@ -52,9 +76,12 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public boolean onItemLongClick(AdapterView<?> adapter,
                                                    View item, int pos, long id) {
+                        Item i = itemArray.get(pos);
+                        cupboard().withDatabase(db).delete(i);
+                        itemArray.remove(pos);
                         itemNameArray.remove(pos);
                         itemsAdapter.notifyDataSetChanged();
-                        writeItems();
+
                         return true;
                     }
                 }
@@ -77,50 +104,30 @@ public class MainActivity extends AppCompatActivity {
             String text = data.getExtras().getString("text");
             int pos = data.getExtras().getInt("pos");
 
+            Item i = itemArray.get(pos);
+            Item toUpdate = cupboard().withDatabase(db).get(i);
+
+            i.setName(text);
+            itemArray.set(pos, i);
             itemNameArray.set(pos, text);
+
+            toUpdate.setName(text);
+            cupboard().withDatabase(db).put(toUpdate);
             itemsAdapter.notifyDataSetChanged();
-            writeItems();
         }
     }
 
     public void onAddItem(View v) {
         EditText etNewItem = (EditText) findViewById(R.id.etNewItem);
         String itemText = etNewItem.getText().toString();
-        itemsAdapter.add(itemText);
+
+        Item i = new Item(itemText);
+        cupboard().withDatabase(db).put(i);
+        itemArray.add(i);
+        itemsAdapter.add(i.getName());
+        itemsAdapter.notifyDataSetChanged();
+
         etNewItem.setText("");
-        writeItems();
-    }
-
-    private void readItems() {
-        File filesDir = getFilesDir();
-        File todoFile = new File(filesDir, "todo.txt");
-        try {
-            itemNameArray = new ArrayList<String>(FileUtils.readLines(todoFile));
-        } catch (IOException e) {
-            itemNameArray = new ArrayList<String>();
-        }
-/*
-        Cursor bunnies = cupboard().withDatabase(db).query(Item.class).getCursor();
-        try {
-            // Iterate Bunnys
-            QueryResultIterable<Item> itr = cupboard().withCursor(bunnies).iterate(Item.class);
-            for (Item bunny : itr) {
-                // do something with bunny
-            }
-        } finally {
-            // close the cursor
-            bunnies.close();
-        }*/
-    }
-
-    private void writeItems() {
-        File filesDir = getFilesDir();
-        File todoFile = new File(filesDir, "todo.txt");
-        try {
-            FileUtils.writeLines(todoFile, itemNameArray);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public void showSoftKeyboard(View view){
