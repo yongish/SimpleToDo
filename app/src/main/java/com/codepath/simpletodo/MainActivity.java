@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -25,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
 
     ListView lvItems;
 
-    ArrayAdapter<String> itemsAdapter;
+    CustomUsersAdapter itemsAdapter;
     ArrayList<Item> itemArray;
     ArrayList<String> itemNameArray;
 
@@ -40,8 +39,7 @@ public class MainActivity extends AppCompatActivity {
         db = dbHelper.getWritableDatabase();
         itemNameArray = getAllItemsNames();
 
-        itemsAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, itemNameArray);
+        itemsAdapter = new CustomUsersAdapter(this, itemArray);
         lvItems.setAdapter(itemsAdapter);
         setupListViewListener();
     }
@@ -124,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
         Item i = new Item(itemText);
         cupboard().withDatabase(db).put(i);
         itemArray.add(i);
-        itemsAdapter.add(i.getName());
+        itemsAdapter.add(i);
         itemsAdapter.notifyDataSetChanged();
 
         etNewItem.setText("");
