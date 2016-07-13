@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -116,6 +115,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onAddItem(View v) {
+        Item i = new Item("");
+        cupboard().withDatabase(db).put(i);
+        itemArray.add(i);
+        itemNameArray.add(i.getName());
+        //itemsAdapter.add(i);
+        //itemsAdapter.notifyDataSetChanged();
+
+        Intent editItem = new Intent(MainActivity.this, EditItemActivity.class);
+        editItem.putExtra("text", "");
+        editItem.putExtra("pos", itemArray.size() - 1);
+        startActivityForResult(editItem, REQUEST_CODE);
+
+        /*
         EditText etNewItem = (EditText) findViewById(R.id.etNewItem);
         String itemText = etNewItem.getText().toString();
 
@@ -125,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
         itemsAdapter.add(i);
         itemsAdapter.notifyDataSetChanged();
 
-        etNewItem.setText("");
+        etNewItem.setText("");*/
     }
 
     public void showSoftKeyboard(View view){
