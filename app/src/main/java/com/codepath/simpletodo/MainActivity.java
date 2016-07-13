@@ -89,8 +89,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapter, View item, int pos, long id) {
                 Intent editItem = new Intent(MainActivity.this, EditItemActivity.class);
-                String itemText = (String) lvItems.getItemAtPosition(pos);
-                editItem.putExtra("text", itemText);
+                Item i = (Item) lvItems.getItemAtPosition(pos);
+                editItem.putExtra("text", i.getName());
                 editItem.putExtra("pos", pos);
                 startActivityForResult(editItem, REQUEST_CODE);
             }
