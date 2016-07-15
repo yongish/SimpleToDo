@@ -4,14 +4,14 @@ public class Item {
 
     public Long _id; // for cupboard
     public String name; // task name
-    public Priority priority;
+    public String priority;
 
     public Item() {
         this.name = "noName";
-        this.priority = Priority.LOW;
+        this.priority = "Low";
     }
 
-    public Item(String name, Priority priority) {
+    public Item(String name, String priority) {
         this.name = name;
         this.priority = priority;
     }
@@ -32,7 +32,7 @@ public class Item {
         this._id = _id;
     }
 
-    public void setPriority(Priority priority) { this.priority = priority; }
+    public void setPriority(String priority) { this.priority = priority; }
 
-    public Priority getPriority() { return priority; }
+    public String getPriority() { return priority; }
 }
