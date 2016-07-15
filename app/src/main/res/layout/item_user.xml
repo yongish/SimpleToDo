@@ -20,7 +20,7 @@
         android:gravity="right"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/tvName"
-        android:text="San Marco"
+        android:text="Low"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
 </RelativeLayout>

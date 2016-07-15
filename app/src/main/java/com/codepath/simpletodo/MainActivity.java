@@ -25,8 +25,6 @@ public class MainActivity extends AppCompatActivity {
 
     CustomUsersAdapter itemsAdapter;
     ArrayList<Item> itemArray;
-    ArrayList<String> itemNameArray;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,23 +34,16 @@ public class MainActivity extends AppCompatActivity {
 
         PracticeDatabaseHelper dbHelper = new PracticeDatabaseHelper(this);
         db = dbHelper.getWritableDatabase();
-        itemNameArray = getAllItemsNames();
+        getAllItems();
 
         itemsAdapter = new CustomUsersAdapter(this, itemArray);
         lvItems.setAdapter(itemsAdapter);
         setupListViewListener();
     }
 
-    public ArrayList<String> getAllItemsNames() {
+    public void getAllItems() {
         final QueryResultIterable<Item> iter = cupboard().withDatabase(db).query(Item.class).query();
         itemArray = (ArrayList<Item>) getListFromQueryResultIterator(iter);
-
-        ArrayList<String> itemNameArray = new ArrayList<String>();
-        for (Item b : itemArray) {
-            itemNameArray.add(b.getName());
-        }
-
-        return itemNameArray;
     }
 
     private static List<Item> getListFromQueryResultIterator(QueryResultIterable<Item> iter) {
@@ -76,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
                         Item i = itemArray.get(pos);
                         cupboard().withDatabase(db).delete(i);
                         itemArray.remove(pos);
-                        itemNameArray.remove(pos);
                         itemsAdapter.notifyDataSetChanged();
 
                         return true;
@@ -106,7 +96,6 @@ public class MainActivity extends AppCompatActivity {
 
             i.setName(text);
             itemArray.set(pos, i);
-            itemNameArray.set(pos, text);
 
             toUpdate.setName(text);
             cupboard().withDatabase(db).put(toUpdate);
@@ -115,29 +104,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onAddItem(View v) {
-        Item i = new Item("");
+        Item i = new Item("", Priority.LOW);
         cupboard().withDatabase(db).put(i);
         itemArray.add(i);
-        itemNameArray.add(i.getName());
-        //itemsAdapter.add(i);
-        //itemsAdapter.notifyDataSetChanged();
 
         Intent editItem = new Intent(MainActivity.this, EditItemActivity.class);
         editItem.putExtra("text", "");
         editItem.putExtra("pos", itemArray.size() - 1);
         startActivityForResult(editItem, REQUEST_CODE);
-
-        /*
-        EditText etNewItem = (EditText) findViewById(R.id.etNewItem);
-        String itemText = etNewItem.getText().toString();
-
-        Item i = new Item(itemText);
-        cupboard().withDatabase(db).put(i);
-        itemArray.add(i);
-        itemsAdapter.add(i);
-        itemsAdapter.notifyDataSetChanged();
-
-        etNewItem.setText("");*/
     }
 
     public void showSoftKeyboard(View view){

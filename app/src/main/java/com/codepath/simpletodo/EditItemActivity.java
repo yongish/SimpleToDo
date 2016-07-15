@@ -19,14 +19,14 @@ public class EditItemActivity extends AppCompatActivity {
         String text = getIntent().getStringExtra("text");
         position = getIntent().getIntExtra("pos", 0);
 
-        EditText editItem = (EditText) findViewById(R.id.editItem);
+        EditText editItem = (EditText) findViewById(R.id.editName);
         editItem.setText(text);
         editItem.setSelection(editItem.getText().length());
         editItem.requestFocus();
     }
 
     public void onSubmit(View v) {
-        EditText editItem = (EditText) findViewById(R.id.editItem);
+        EditText editItem = (EditText) findViewById(R.id.editName);
 
         Intent data = new Intent();
         data.putExtra("text", editItem.getText().toString());

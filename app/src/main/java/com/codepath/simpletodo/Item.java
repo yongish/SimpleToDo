@@ -3,18 +3,17 @@ package com.codepath.simpletodo;
 public class Item {
 
     public Long _id; // for cupboard
-    public String name; // bunny name
-    //public Integer cuteValue ; // bunny cuteness
-
+    public String name; // task name
+    public Priority priority;
 
     public Item() {
         this.name = "noName";
-        //this.cuteValue = 0;
+        this.priority = Priority.LOW;
     }
 
-    public Item(String name) {//, Integer cuteValue) {
+    public Item(String name, Priority priority) {
         this.name = name;
-        //this.cuteValue = cuteValue;
+        this.priority = priority;
     }
 
     public String getName() {
@@ -32,4 +31,8 @@ public class Item {
     public void set_id(Long _id) {
         this._id = _id;
     }
+
+    public void setPriority(Priority priority) { this.priority = priority; }
+
+    public Priority getPriority() { return priority; }
 }
